@@ -37,10 +37,40 @@ def test_add_new_user(setup_database, connection):
     assert user, "Пользователь должен быть добавлен в базу данных."
 
 # Возможные варианты тестов:
-"""
-Тест добавления пользователя с существующим логином.
-Тест успешной аутентификации пользователя.
-Тест аутентификации несуществующего пользователя.
-Тест аутентификации пользователя с неправильным паролем.
-Тест отображения списка пользователей.
-"""
+
+# Тест добавления пользователя с существующим логином.
+# Тест успешной аутентификации пользователя.
+# Тест аутентификации несуществующего пользователя.
+# Тест аутентификации пользователя с неправильным паролем.
+# Тест отображения списка пользователей.
+
+def test_add_duplicate_user(setup_database, connection):
+    """Тест добавления пользователя с существующим логином."""
+    add_user('dupuser', 'dup@example.com', 'pass123')
+    result = add_user('dupuser', 'other@example.com', 'pass456')
+    assert result is False, "Добавление пользователя с существующим логином должно возвращать False."
+
+def test_authenticate_success(setup_database, connection):
+    """Тест успешной аутентификации пользователя."""
+    add_user('authuser', 'auth@example.com', 'secret')
+    assert authenticate_user('authuser', 'secret') is True, "Аутентификация с верными данными должна проходить."
+
+def test_authenticate_nonexistent_user(setup_database, connection):
+    """Тест аутентификации несуществующего пользователя."""
+    assert authenticate_user('nobody', 'password') is False, "Аутентификация несуществующего пользователя должна возвращать False."
+
+def test_authenticate_wrong_password(setup_database, connection):
+    """Тест аутентификации пользователя с неправильным паролем."""
+    add_user('passuser', 'pass@example.com', 'correct')
+    assert authenticate_user('passuser', 'wrong') is False, "Аутентификация с неправильным паролем должна возвращать False."
+
+def test_display_users(setup_database, connection, capsys):
+    """Тест отображения списка пользователей."""
+    add_user('user1', 'user1@example.com', 'pass1')
+    add_user('user2', 'user2@example.com', 'pass2')
+    display_users()
+    captured = capsys.readouterr()
+    assert 'user1' in captured.out, "Вывод должен содержать логин user1."
+    assert 'user2' in captured.out, "Вывод должен содержать логин user2."
+    assert 'user1@example.com' in captured.out, "Вывод должен содержать email user1."
+    assert 'user2@example.com' in captured.out, "Вывод должен содержать email user2."
