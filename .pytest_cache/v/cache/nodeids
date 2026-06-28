@@ -1,0 +1,9 @@
+[
+  "tests/test_registration.py::test_add_duplicate_user",
+  "tests/test_registration.py::test_add_new_user",
+  "tests/test_registration.py::test_authenticate_nonexistent_user",
+  "tests/test_registration.py::test_authenticate_success",
+  "tests/test_registration.py::test_authenticate_wrong_password",
+  "tests/test_registration.py::test_create_db",
+  "tests/test_registration.py::test_display_users"
+]
